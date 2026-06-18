@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI Lernpfad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #0d0f1a;
+    --surface: #141728;
+    --surface2: #1c2038;
+    --border: #2a2f52;
+    --purple: #7c5cfc;
+    --purple-light: #a78bfa;
+    --cyan: #22d3ee;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --red: #f87171;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--purple-light);
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .stat-chip .icon { font-size: 16px; }
+  .stat-chip.xp { color: var(--yellow); }
+  .stat-chip.streak { color: var(--orange); }
+  .stat-chip.gems { color: var(--cyan); }
+
+  /* ── LAYOUT ── */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    gap: 32px;
+  }
+
+  /* ── LEFT SIDEBAR ── */
+  .sidebar-left {
+    position: sticky;
+    top: 96px;
+    height: fit-content;
+  }
+
+  .profile-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .profile-avatar {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .profile-name {
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .profile-level {
+    color: var(--purple-light);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .xp-bar-wrap {
+    background: var(--surface2);
+    border-radius: 8px;
+    height: 8px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+
+  .xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    border-radius: 8px;
+    width: 62%;
+    transition: width 1s ease;
+  }
+
+  .xp-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .nav-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(124,92,252,0.15); color: var(--purple-light); }
+  .nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+  /* ── RIGHT SIDEBAR ── */
+  .sidebar-right {
+    position: sticky;
+    top: 96px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .streak-card {
+    background: linear-gradient(135deg, #1a1040, #0f1f2e);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .streak-fire {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 8px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  .streak-card h3 {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--orange);
+  }
+
+  .streak-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .streak-days {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .streak-day {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+
+  .streak-day.done {
+    background: rgba(251,146,60,0.2);
+    color: var(--orange);
+    border: 1px solid rgba(251,146,60,0.4);
+  }
+
+  .leaderboard-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .lb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .lb-item:last-child { border: none; }
+  .lb-rank { width: 20px; color: var(--text-muted); font-size: 13px; }
+  .lb-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .lb-name { flex: 1; }
+  .lb-xp { color: var(--yellow); font-size: 13px; }
+
+  /* ── MAIN PATH ── */
+  .path-main {}
+
+  .section-header {
+    background: linear-gradient(135deg, var(--surface), var(--surface2));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+
+  .section-header.anthropic::before { background: linear-gradient(to bottom, var(--purple), var(--cyan)); }
+  .section-header.udemy::before { background: linear-gradient(to bottom, var(--orange), var(--yellow)); }
+
+  .section-badge {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .section-badge.anthropic { background: rgba(124,92,252,0.2); border: 1px solid rgba(124,92,252,0.4); }
+  .section-badge.udemy { background: rgba(251,146,60,0.2); border: 1px solid rgba(251,146,60,0.4); }
+
+  .section-info h2 {
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .section-info p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .section-progress {
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .progress-ring {
+    width: 44px; height: 44px;
+    position: relative;
+  }
+
+  .progress-ring svg { transform: rotate(-90deg); }
+
+  .progress-ring .track {
+    fill: none;
+    stroke: var(--surface2);
+    stroke-width: 4;
+  }
+
+  .progress-ring .fill {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+  }
+
+  .progress-ring .fill.anthropic { stroke: var(--purple); }
+  .progress-ring .fill.udemy { stroke: var(--orange); }
+
+  .progress-pct {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  /* ── PATH UNITS ── */
+  .path-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 24px;
+    position: relative;
+  }
+
+  .path-column::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--border) 0, var(--border) 6px, transparent 6px, transparent 14px);
+    z-index: 0;
+  }
+
+  .unit-row {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin: 6px 0;
+  }
+
+  .unit-row.left { margin-right: 120px; }
+  .unit-row.center { }
+  .unit-row.right { margin-left: 120px; }
+
+  .unit-btn {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    position: relative;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-align: center;
+    gap: 2px;
+  }
+
+  .unit-btn:hover:not(.locked) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .unit-btn:active:not(.locked) { transform: scale(0.96); }
+
+  .unit-icon { font-size: 26px; line-height: 1; }
+
+  .unit-btn.done {
+    background: linear-gradient(135deg, #1a3a2e, #0d4a2f);
+    border: 3px solid var(--green);
+    color: var(--green);
+    box-shadow: 0 0 20px rgba(74,222,128,0.2);
+  }
+
+  .unit-btn.active {
+    background: linear-gradient(135deg, var(--purple), #5b21b6);
+    border: 3px solid var(--purple-light);
+    color: white;
+    box-shadow: 0 0 28px rgba(124,92,252,0.5);
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  .unit-btn.active.udemy {
+    background: linear-gradient(135deg, var(--orange), #c2410c);
+    border: 3px solid var(--yellow);
+    box-shadow: 0 0 28px rgba(251,146,60,0.5);
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(124,92,252,0.4); }
+    50% { box-shadow: 0 0 36px rgba(124,92,252,0.7); }
+  }
+
+  .unit-btn.locked {
+    background: var(--surface2);
+    border: 3px solid var(--border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .unit-btn.locked .unit-icon::after {
+    content: '';
+  }
+
+  .unit-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 180px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .unit-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--border);
+  }
+
+  .unit-btn:hover .unit-tooltip { opacity: 1; }
+
+  .unit-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .unit-row.left .unit-label { right: calc(100% + 10px); text-align: right; }
+  .unit-row.right .unit-label { left: calc(100% + 10px); }
+  .unit-row.center .unit-label { left: calc(100% + 10px); }
+
+  /* checkpoint */
+  .checkpoint {
+    background: linear-gradient(135deg, var(--surface2), var(--surface));
+    border: 2px solid var(--border);
+    border-radius: 40px;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+    z-index: 1;
+    position: relative;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .checkpoint.unlocked { border-color: var(--yellow); color: var(--yellow); }
+  .checkpoint.locked { color: var(--text-muted); }
+
+  /* udemy placeholder */
+  .udemy-placeholder {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(251,146,60,0.04),
+      rgba(251,146,60,0.04) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    border: 2px dashed rgba(251,146,60,0.3);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    margin: 16px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .udemy-placeholder h3 {
+    color: var(--orange);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .udemy-placeholder p {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .add-course-btn {
+    margin-top: 14px;
+    background: rgba(251,146,60,0.15);
+    border: 1px solid rgba(251,146,60,0.4);
+    color: var(--orange);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+  }
+
+  .add-course-btn:hover {
+    background: rgba(251,146,60,0.25);
+    transform: translateY(-1px);
+  }
+
+  /* modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    width: 480px;
+    max-width: 90vw;
+    transform: translateY(20px);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal h2 {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+
+  .modal-sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .modal-input:focus { border-color: var(--orange); }
+
+  .modal-textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .btn-primary {
+    flex: 1;
+    background: linear-gradient(135deg, var(--orange), #c2410c);
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+
+  .btn-secondary {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    color: var(--text-dim);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  /* lesson modal */
+  .lesson-modal-icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .lesson-modal-title {
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .lesson-modal-desc {
+    color: var(--text-dim);
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .lesson-meta {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .lesson-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+
+  .btn-start {
+    width: 100%;
+    background: linear-gradient(135deg, var(--purple), #5b21b6);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.15s;
+  }
+
+  .btn-start:hover { opacity: 0.9; }
+  .btn-start.done-btn {
+    background: linear-gradient(135deg, #166534, #14532d);
+    border: 1px solid var(--green);
+  }
+
+  .done-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid rgba(74,222,128,0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  /* toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green);
+    color: #0a1a0f;
+    border-radius: 14px;
+    padding: 12px 24px;
+    font-weight: 800;
+    font-size: 15px;
+    z-index: 300;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .sidebar-left, .sidebar-right { position: static; }
+    .unit-row.left { margin-right: 60px; }
+    .unit-row.right { margin-left: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🤖</div>
+    KI Lernpfad
+  </div>
+  <div class="header-stats">
+    <div class="stat-chip xp"><span class="icon">⚡</span> <span id="xp-display">1240</span> XP</div>
+    <div class="stat-chip streak"><span class="icon">🔥</span> <span id="streak-display">5</span> Tage</div>
+    <div class="stat-chip gems"><span class="icon">💎</span> <span id="gems-display">48</span></div>
+  </div>
+</header>
+
+<div class="app-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar-left">
+    <div class="profile-card">
+      <div class="profile-avatar">👩‍💻</div>
+      <div class="profile-name">Nadine</div>
+      <div class="profile-level">Level 4 · KI-Entdeckerin</div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-fill" id="xp-bar"></div>
+      </div>
+      <div class="xp-label">
+        <span>1240 XP</span>
+        <span>2000 XP</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-item active">
+        <span class="nav-icon">🗺️</span> Lernpfad
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🏆</span> Erfolge
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">📊</span> Statistiken
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🔖</span> Lesezeichen
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="card-title">Quellen</div>
+      <div class="nav-item">
+        <span class="nav-icon">🟣</span> Anthropic Academy
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🟠</span> Meine Udemy-Kurse
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN PATH -->
+  <main class="path-main">
+
+    <!-- === ANTHROPIC SECTION === -->
+    <div class="section-header anthropic" onclick="toggleSection('anthropic')">
+      <div class="section-badge anthropic">🤖</div>
+      <div class="section-info">
+        <h2>Anthropic Academy</h2>
+        <p>Offiziell · Kostenlos · Zertifikat inklusive</p>
+      </div>
+      <div class="section-progress">
+        <div class="progress-ring">
+          <svg viewBox="0 0 44 44" width="44" height="44">
+            <circle class="track" cx="22" cy="22" r="18"/>
+            <circle class="fill anthropic" cx="22" cy="22" r="18"
+              stroke-dasharray="113"
+              stroke-dashoffset="43"
+              id="anthropic-ring"/>
+          </svg>
+          <div class="progress-pct" id="anthropic-pct">62%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="path-column" id="anthropic-path">
+
+      <!-- Unit 1 -->
+      <div class="unit-row left">
+        <div class="unit-btn done" onclick="openLesson('fluency')">
+          <div class="unit-icon">🌟</div>
+          <div>KI-Grundlagen</div>
+          <div class="unit-tooltip">AI Fluency: Framework & Foundations<br><br>✅ Abgeschlossen · +120 XP</div>
+        </div>
+        <span class="unit-label">AI Fluency<br>Foundations</span>
+      </div>
+
+      <!-- Unit 2 -->
+      <div class="unit-row right">
+        <div class="unit-btn done" onclick="openLesson('claude101')">
+          <div class="unit-icon">💬</div>
+          <div>Claude 101</div>
+          <div class="unit-tooltip">Claude 101: Praktische Grundlagen<br><br>✅ Abgeschlossen · +100 XP</div>
+        </div>
+        <span class="unit-label">Claude 101</span>
+      </div>
+
+      <!-- Unit 3 -->
+      <div class="unit-row center">
+        <div class="unit-btn done" onclick="openLesson('agentskills')">
+          <div class="unit-icon">🤝</div>
+          <div>Agent Skills</div>
+          <div class="unit-tooltip">Introduction to Agent Skills<br><br>✅ Abgeschlossen · +140 XP</div>
+        </div>
+        <span class="unit-label">Agent Skills</span>
+      </div>
+
+      <!-- Checkpoint -->
+      <div class="checkpoint unlocked">
+        🏅 Einheit 1 abgeschlossen · Zertifikat "KI-Einsteiger" freigeschaltet!
+      </div>
+
+      <!-- Unit 4 — ACTIVE -->
+      <div class="unit-row left">
+        <div class="unit-btn active" onclick="openLesson('api')">
+          <div class="unit-icon">⚡</div>
+          <div>Claude API</div>
+          <div class="unit-tooltip">Building with the Claude API<br><br>▶ Aktuelle Lektion</div>
+        </div>
+        <span class="unit-label">Claude API</span>
+      </div>
+
+      <!-- Unit 5 -->
+      <div class="unit-row right">
+        <div class="unit-btn locked">
+          <div class="unit-icon">🔗</div>
+          <div>MCP Intro</div>
+          <div class="unit-tooltip">Intro to Model Context Protocol<br><br>🔒 Schließe Claude API ab</div>
+        </div>
+        <span class="unit-label">MCP Intro</span>
+      </div>
+
+      <!-- Unit 6 -->
+      <div class="unit-row center">
+        <div class="unit-btn locked">
+          <div class="unit-icon">🚀</div>
+          <div>MCP Advanced</div>
+          <div class="unit-tooltip">MCP: Advanced Topics<br><br>🔒 Benötigt MCP Intro</div>
+        </div>
+        <span class="unit-label">MCP Advanced</span>
+      </div>
+
+      <!-- Unit 7 -->
+      <div class="unit-row left">
+        <div class="unit-btn locked">
+          <div class="unit-icon">💻</div>
+          <div>Claude Code</div>
+          <div class="unit-tooltip">Claude Code in Action<br><br>🔒 Benötigt MCP Intro</div>
+        </div>
+        <span class="unit-label">Claude Code</span>
+      </div>
+
+      <!-- Checkpoint locked -->
+      <div class="checkpoint locked">
+        🔒 Zertifikat "Claude Developer" — 4 Lektionen fehlen noch
+      </div>
+
+    </div>
+
+    <!-- === UDEMY SECTION === -->
+    <div class="section-header udemy" style="margin-top:16px">
+      <div class="section-badge udemy">🎓</div>
+      <div class="section-info">
+        <h2>Meine Udemy-Kurse</h2>
+        <p>Eigene Kurse hinzufügen und in den Pfad integrieren</p>
+      </div>
+      <div class="section-progress">
+        <div class="progress-ring">
+          <svg viewBox="0 0 44 44" width="44" height="44">
+            <circle class="track" cx="22" cy="22" r="18"/>
+            <circle class="fill udemy" cx="22" cy="22" r="18"
+              stroke-dasharray="113"
+              stroke-dashoffset="113"
+              id="udemy-ring"/>
+          </svg>
+          <div class="progress-pct" style="color:var(--orange)">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="path-column" id="udemy-path">
+      <div class="udemy-placeholder">
+        <h3>🟠 Deine Udemy-Kurse fehlen noch</h3>
+        <p>Füge deine Udemy-Kurse hinzu und ich integriere sie nahtlos in deinen persönlichen Lernpfad — mit XP, Fortschritt und Reihenfolge.</p>
+        <button class="add-course-btn" onclick="openAddModal()">+ Kurs hinzufügen</button>
+      </div>
+
+      <div id="udemy-units"></div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar-right">
+
+    <div class="streak-card">
+      <span class="streak-fire">🔥</span>
+      <h3>5 Tage</h3>
+      <p>Lern-Streak — weiter so!</p>
+      <div class="streak-days">
+        <div class="streak-day done">Mo</div>
+        <div class="streak-day done">Di</div>
+        <div class="streak-day done">Mi</div>
+        <div class="streak-day done">Do</div>
+        <div class="streak-day done">Fr</div>
+        <div class="streak-day">Sa</div>
+        <div class="streak-day">So</div>
+      </div>
+    </div>
+
+    <div class="leaderboard-card">
+      <div class="card-title">🏆 Diese Woche</div>
+      <div class="lb-item">
+        <span class="lb-rank">1</span>
+        <span class="lb-avatar" style="background:rgba(251,191,36,0.2)">🦁</span>
+        <span class="lb-name">Nadine</span>
+        <span class="lb-xp">1240 XP</span>
+      </div>
+      <div class="lb-item">
+        <span class="lb-rank">2</span>
+        <span class="lb-avatar" style="background:rgba(148,163,184,0.2)">🐺</span>
+        <span class="lb-name">Marcus</span>
+        <span class="lb-xp">980 XP</span>
+      </div>
+      <div class="lb-item">
+        <span class="lb-rank">3</span>
+        <span class="lb-avatar" style="background:rgba(251,146,60,0.2)">🦊</span>
+        <span class="lb-name">Lena</span>
+        <span class="lb-xp">870 XP</span>
+      </div>
+    </div>
+
+    <div class="leaderboard-card">
+      <div class="card-title">📚 Nächste Schritte</div>
+      <div style="font-size:13px; color:var(--text-dim); line-height:1.8;">
+        <div>▶ <strong style="color:var(--text)">Claude API</strong> fortführen</div>
+        <div>🔒 MCP Intro freischalten</div>
+        <div>🔒 Claude Code starten</div>
+        <div style="margin-top:8px; color:var(--purple-light)">+ Udemy-Kurs hinzufügen</div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- LESSON MODAL -->
+<div class="modal-overlay" id="lesson-modal">
+  <div class="modal">
+    <div class="lesson-modal-icon" id="modal-icon">⚡</div>
+    <div class="lesson-modal-title" id="modal-title">Building with the Claude API</div>
+    <div class="lesson-meta">
+      <span class="lesson-tag" id="modal-duration">⏱ ~3 Std.</span>
+      <span class="lesson-tag" id="modal-xp">⚡ +150 XP</span>
+      <span class="lesson-tag" id="modal-level">🎯 Mittel</span>
+    </div>
+    <div class="lesson-modal-desc" id="modal-desc">Lerne die Claude API von Grund auf kennen: Authentication, Request-Handling, Streaming und Tool Use.</div>
+    <div id="modal-done-badge" style="display:none" class="done-check">✅ Bereits abgeschlossen!</div>
+    <button class="btn-start" id="modal-btn" onclick="completeLesson()">
+      ▶ Lektion starten
+    </button>
+    <div style="margin-top:12px">
+      <button class="btn-secondary" style="width:100%" onclick="closeModal()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD UDEMY MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h2>🟠 Udemy-Kurs hinzufügen</h2>
+    <div class="modal-sub">Füge einen Kurs aus deiner Udemy-Bibliothek hinzu.</div>
+    <input class="modal-input" id="course-title" placeholder="Kursname (z.B. Python Bootcamp)" />
+    <input class="modal-input" id="course-sections" placeholder="Anzahl Sektionen (z.B. 12)" type="number" min="1" max="50" />
+    <textarea class="modal-textarea modal-input" id="course-desc" placeholder="Kurzbeschreibung (optional)"></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeAddModal()">Abbrechen</button>
+      <button class="btn-primary" onclick="addCourse()">Hinzufügen ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">🎉 +150 XP verdient!</div>
+
+<script>
+  const lessons = {
+    fluency: {
+      icon: '🌟', title: 'AI Fluency: Framework & Foundations',
+      duration: '~3 Std.', xp: '+120 XP', level: 'Einsteiger',
+      desc: 'Lerne die Grundlagen der KI-Arbeit: das 4E-Framework (Effective, Efficient, Ethical, Safe) und praktische Zusammenarbeit mit KI.',
+      done: true
+    },
+    claude101: {
+      icon: '💬', title: 'Claude 101',
+      duration: '~1 Std.', xp: '+100 XP', level: 'Einsteiger',
+      desc: 'Schnelleinstieg in Claude: E-Mails schreiben, Daten analysieren, Dokumente aufbereiten — ohne Programmierkenntnisse.',
+      done: true
+    },
+    agentskills: {
+      icon: '🤝', title: 'Introduction to Agent Skills',
+      duration: '~2 Std.', xp: '+140 XP', level: 'Mittel',
+      desc: 'Verstehe, wie KI-Agenten Aufgaben eigenständig ausführen und lerne, Claude-Skills gezielt einzusetzen.',
+      done: true
+    },
+    api: {
+      icon: '⚡', title: 'Building with the Claude API',
+      duration: '~3 Std.', xp: '+150 XP', level: 'Mittel',
+      desc: 'Lerne die Claude API von Grund auf: Authentication, Request-Handling, Response-Parsing, Streaming und Tool Use.',
+      done: false
+    }
+  };
+
+  let currentLesson = null;
+  let xp = 1240;
+  let completedUdemy = {};
+
+  function openLesson(id) {
+    currentLesson = id;
+    const l = lessons[id];
+    document.getElementById('modal-icon').textContent = l.icon;
+    document.getElementById('modal-title').textContent = l.title;
+    document.getElementById('modal-duration').textContent = '⏱ ' + l.duration;
+    document.getElementById('modal-xp').textContent = '⚡ ' + l.xp;
+    document.getElementById('modal-level').textContent = '🎯 ' + l.level;
+    document.getElementById('modal-desc').textContent = l.desc;
+    document.getElementById('modal-done-badge').style.display = l.done ? 'flex' : 'none';
+    const btn = document.getElementById('modal-btn');
+    if (l.done) {
+      btn.textContent = '🔄 Wiederholen';
+      btn.classList.add('done-btn');
+    } else {
+      btn.innerHTML = '▶ Lektion starten';
+      btn.classList.remove('done-btn');
+    }
+    document.getElementById('lesson-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('lesson-modal').classList.remove('open');
+    currentLesson = null;
+  }
+
+  function completeLesson() {
+    if (currentLesson && !lessons[currentLesson].done) {
+      lessons[currentLesson].done = true;
+      const gain = parseInt(lessons[currentLesson].xp);
+      xp += gain;
+      document.getElementById('xp-display').textContent = xp;
+      updateXPBar();
+      showToast('🎉 +' + gain + ' XP verdient!');
+    }
+    closeModal();
+  }
+
+  function updateXPBar() {
+    const pct = Math.min((xp / 2000) * 100, 100);
+    document.getElementById('xp-bar').style.width = pct + '%';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // Udemy add course
+  const udemyCourses = [];
+
+  function openAddModal() {
+    document.getElementById('add-modal').classList.add('open');
+  }
+
+  function closeAddModal() {
+    document.getElementById('add-modal').classList.remove('open');
+  }
+
+  function addCourse() {
+    const title = document.getElementById('course-title').value.trim();
+    const sections = parseInt(document.getElementById('course-sections').value) || 5;
+    const desc = document.getElementById('course-desc').value.trim();
+    if (!title) return;
+
+    udemyCourses.push({ title, sections, desc });
+    renderUdemyCourses();
+    closeAddModal();
+    document.getElementById('course-title').value = '';
+    document.getElementById('course-sections').value = '';
+    document.getElementById('course-desc').value = '';
+    showToast('✅ Kurs "' + title + '" hinzugefügt!');
+  }
+
+  const icons = ['📘','🎯','🛠️','📊','🧠','🌐','🔧','📱','💡','🗃️'];
+  const positions = ['left','center','right','left','right','center'];
+
+  function renderUdemyCourses() {
+    const container = document.getElementById('udemy-units');
+    container.innerHTML = '';
+
+    // hide placeholder if courses exist
+    const placeholder = document.querySelector('.udemy-placeholder');
+    placeholder.style.display = udemyCourses.length > 0 ? 'none' : 'block';
+
+    let totalUnits = 0;
+    let doneUnits = 0;
+
+    udemyCourses.forEach((course, ci) => {
+      // Section divider
+      const divider = document.createElement('div');
+      divider.style.cssText = 'text-align:center;color:var(--orange);font-weight:800;font-size:13px;margin:16px 0 8px;position:relative;z-index:1;';
+      divider.textContent = '📚 ' + course.title;
+      container.appendChild(divider);
+
+      for (let i = 0; i < course.sections; i++) {
+        totalUnits++;
+        const id = 'udemy_' + ci + '_' + i;
+        const done = !!completedUdemy[id];
+        if (done) doneUnits++;
+
+        const row = document.createElement('div');
+        row.className = 'unit-row ' + positions[i % positions.length];
+
+        const icon = icons[i % icons.length];
+        const isFirst = i === 0 && !done;
+        const btn = document.createElement('div');
+        btn.className = 'unit-btn ' + (done ? 'done' : (isFirst ? 'active udemy' : 'locked'));
+
+        btn.innerHTML = `
+          <div class="unit-icon">${icon}</div>
+          <div>Sek. ${i+1}</div>
+          <div class="unit-tooltip">${course.title}<br>Sektion ${i+1}${done ? '<br><br>✅ Abgeschlossen' : ''}</div>
+        `;
+
+        if (done || isFirst) {
+          btn.addEventListener('click', () => {
+            if (!done) {
+              completedUdemy[id] = true;
+              xp += 100;
+              document.getElementById('xp-display').textContent = xp;
+              updateXPBar();
+              showToast('🎉 Sektion ' + (i+1) + ' abgeschlossen! +100 XP');
+              renderUdemyCourses();
+            } else {
+              showToast('✅ Bereits abgeschlossen!');
+            }
+          });
+        }
+
+        const label = document.createElement('span');
+        label.className = 'unit-label';
+        label.textContent = 'Sektion ' + (i+1);
+
+        row.appendChild(btn);
+        row.appendChild(label);
+        container.appendChild(row);
+      }
+    });
+
+    // update ring
+    if (totalUnits > 0) {
+      const pct = Math.round((doneUnits / totalUnits) * 100);
+      const offset = 113 - (113 * pct / 100);
+      document.getElementById('udemy-ring').setAttribute('stroke-dashoffset', offset);
+      document.querySelector('#udemy-path').previousElementSibling.querySelector('.progress-pct').textContent = pct + '%';
+    }
+  }
+
+  // init
+  updateXPBar();
+  renderUdemyCourses();
+
+  // close modals on overlay click
+  document.getElementById('lesson-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.getElementById('add-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAddModal();
+  });
+</script>
+</body>
+</html>
